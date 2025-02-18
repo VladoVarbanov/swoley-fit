@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import SectionWrapper from "./SectionWrapper.jsx";
-import { WORKOUTS } from "../utils/swoldier.js";
+import { SCHEMES, WORKOUTS } from "../utils/swoldier.js";
 
 function Header(props) {
   const { index, title, description } = props;
@@ -18,6 +18,14 @@ function Header(props) {
 }
 
 export default function Generator() {
+  const [showModal, setShowModal] = useState(false);
+  const [poison, setPoison] = useState("individual");
+  const [muscles, setMuscles] = useState([]);
+  const [goal, setGoal] = useState("strength_power");
+  function toggleModal() {
+    setShowModal(!showModal);
+  }
+
   return (
     <SectionWrapper
       header={"generate your workout"}
@@ -28,11 +36,71 @@ export default function Generator() {
         title={"Pick your poison"}
         description={"Select the workout you wish to endure."}
       />
-      <div className="grid gid-cols-2 sm:grid-cls-4 gap-4">
+      <div className="grid gid-cols-2 sm:grid-cols-4 gap-4">
         {Object.keys(WORKOUTS).map((type, typeIndex) => {
           return (
-            <button key={typeIndex}>
-              <p>{type}</p>
+            <button
+              onClick={() => {
+                setPoison(type);
+              }}
+              className={
+                "bg-slate-950 border duration-200 hover:border-blue-600 py-3 rounded-lg " +
+                (type === poison ? "border-blue-600" : "border-blue-400")
+              }
+              key={typeIndex}
+            >
+              <p className="capitalize">{type.replaceAll("_", " ")}</p>
+            </button>
+          );
+        })}
+      </div>
+      <Header
+        index={"02"}
+        title={"Lock on targets"}
+        description={"Select the muscles judged for annihilation."}
+      />
+      <div className="bg-slate-950 border border-solid border-blue-400 rounded-lg flex flex-col">
+        <button
+          onClick={toggleModal}
+          className="relative py-3 flex items-center justify-center"
+        >
+          <p>Select muscle groups</p>
+          <i className="fa-solid absolute right-3 top-1/2 -translate-y-1/2 fa-sort-down"></i>
+        </button>
+        {showModal && (
+          <div className="flex flex-col p-3">
+            {(poison === "individual"
+              ? WORKOUTS[poison]
+              : Object.keys(WORKOUTS[poison])
+            ).map((muscleGroup, muscleGroupIndex) => {
+              return (
+                <button key={muscleGroupIndex}>
+                  <p>{muscleGroup}</p>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      <Header
+        index={"03"}
+        title={"Become Juggernaut"}
+        description={"Select your ultimate objective."}
+      />
+      <div className="grid gid-cols-3 sm:grid-cols-3 gap-4">
+        {Object.keys(SCHEMES).map((scheme, schemeIndex) => {
+          return (
+            <button
+              onClick={() => {
+                setGoal(scheme);
+              }}
+              className={
+                "bg-slate-950 border duration-200 hover:border-blue-600 py-3 rounded-lg " +
+                (scheme === goal ? "border-blue-600" : "border-blue-400")
+              }
+              key={schemeIndex}
+            >
+              <p className="capitalize">{scheme.replaceAll("_", " ")}</p>
             </button>
           );
         })}
